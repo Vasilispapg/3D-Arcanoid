@@ -130,6 +130,10 @@ void drawPlayer(float size){
    glEnd();
 }
 
+
+void drawEnemy(float size){
+
+}
 float angleX = 0.0f;
 float xr = 0, yr = 0;
 
