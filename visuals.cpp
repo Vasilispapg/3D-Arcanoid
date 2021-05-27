@@ -7,6 +7,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include <stdlib.h>     /* srand, rand */
 
 #include "visuals.h"
 
@@ -23,7 +24,7 @@ int blend_scene = 0;
 
 
 
-void drawCuby(float size){
+void drawSpace(float size){
     glBegin(GL_TRIANGLES);
         //Front
         glNormal3f(0.0f, 0.0f, 1.0f);
@@ -88,7 +89,7 @@ void drawBall(float size){
     glutSolidSphere(size/2.f, 40, 40);
 }
 
-void drawPlayer(float size){
+void drawCube(float size){
    glBegin(GL_QUADS);
         //front
         glVertex3f(-size/2.f, -size/2.f, size/16.f); //--+
@@ -131,9 +132,56 @@ void drawPlayer(float size){
 }
 
 
-void drawEnemy(float size){
-
+float r[9][3];
+float g[9][3];
+float b[9][3];
+bool flagcolor=true;
+void findColors(){
+    if(flagcolor){
+        srand((unsigned)time(NULL));
+            for(int i=0;i<10;i++){
+                for(int j=0;j<4;j++){
+                    r[i][j] = (float) rand()/RAND_MAX;
+                    g[i][j] =(float) rand()/RAND_MAX;
+                    b[i][j] = (float) rand()/RAND_MAX;
+                }
+            }
+    }
+    flagcolor=false;
+    //gia na min jana allazei apo tin idle
 }
+
+void drawEnemy(float size){
+    glRotatef(60, 0, 1, 0); //για να γυρισουν πλαγια
+    findColors();//gia na orisei ta xrwmata stoys kivous
+    for(int j=0;j<4;j++){
+
+        glPushMatrix(); //για τον αξονα z
+
+        for(int i =0;i<10;i++){
+
+            glPushMatrix(); // για τον αξονα y
+
+            if(i){//an einai 0 na min sxediasi
+                glColor3f(r[i][j],g[i][j],b[i][j]);
+                drawCube(size);
+                glTranslatef(size+7, 0, 0);
+            }
+
+            if(!(i%3)){ //για να εχω 3 σε καθε γραμμη
+                glPopMatrix();//αξονας y
+                glTranslatef(0, size+7, 0); //μολις βρω το 3ο τοτε ξανα παω στην θεση χ=0, και το ανεβαζω στον αξονα y κατα size+7 
+            }
+
+            if(i==9){
+                glPopMatrix(); //αξονας z
+                glTranslatef(0, 0, size/3);
+            }
+        }
+        
+    }
+}
+
 float angleX = 0.0f;
 float xr = 0, yr = 0;
 
@@ -150,13 +198,14 @@ void Render()
     glRotatef(yr, 0, 1, 0);
     glRotatef(xr, 1, 0, 0);
     glColor4f(0.396, 0.572, 0.49,.5); //r g b a
-    // drawCuby(80.0f);
+    // drawSpace(80.0f);
     
-    glTranslatef(50, 0, 0);
+    // glTranslatef(50, 0, 0);
     // drawBall(80.0f);
 
-    glTranslatef(50, 0, 0);
-    drawPlayer(80.0f);
+    glTranslatef(-100, -150, 0);
+    drawEnemy(80.0f);
+    // drawCube(80.0f);
 
     glutSwapBuffers();
 }
@@ -167,8 +216,8 @@ void Idle()
 {
     if(flag){
         
-        yr++;
-        xr++;
+        // yr++;
+        // xr++;
     }
        
     glutPostRedisplay();
