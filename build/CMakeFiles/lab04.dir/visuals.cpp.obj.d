@@ -290,4 +290,7 @@ CMakeFiles/lab04.dir/visuals.cpp.obj: \
  C:/PROGRA~1/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/math.h \
  C:/PROGRA~1/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/cmath \
  C:/PROGRA~1/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/x86_64-w64-mingw32/include/math.h \
- C:\Users\vasilispapg\Desktop\OpenGL_lab_04\visuals.h
+ C:\Users\vasilispapg\Desktop\OpenGL_lab_04\visuals.h \
+ C:\Users\vasilispapg\Desktop\OpenGL_lab_04\Enemy.cpp \
+ C:\Users\vasilispapg\Desktop\OpenGL_lab_04\Ball.cpp \
+ C:\Users\vasilispapg\Desktop\OpenGL_lab_04\Player.cpp
