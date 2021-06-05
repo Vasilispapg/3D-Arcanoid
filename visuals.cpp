@@ -6,7 +6,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdlib.h> /* srand, rand */
-#include <string.h>
+#include <string.h>   
 
 #include "visuals.h"
 
@@ -130,16 +130,28 @@ void drawCube(float size) {
   glEnd();
 }
 
+void keimeno(const char *str, float size)
+{
+    glPushMatrix();
+    glScalef(.3, .3, 1);
+  glColor3f(0,0,0);
+    for (unsigned int i = 0; i < strlen(str); i++)  {
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, str[i]);
+    }
+    
+    glPopMatrix();
+
+}
+
 
 void drawEnemy(float size) {
   int sizey = 4;
   int sizex = sizey * sizey;
 
-  float find_pos_x = size;
-  float find_pos_y = size;
-  float find_pos_z = size;
+  float find_pos_x = 0;
+  float find_pos_y = 0;
+  float find_pos_z = 0;
 
-  // glRotatef(45, 0, 1, 0); //για να γυρισουν πλαγια
   game.findColors(); // gia na orisei ta xrwmata stoys kivous
   for (int j = 0; j < sizey; j++) {
 
@@ -147,25 +159,18 @@ void drawEnemy(float size) {
 
     for (int i = 0; i < sizex; i++) {
       glPushMatrix(); // για τον αξονα y
- // an einai 0 na min sxediasi
+      // an einai 0 na min sxediasi
         glColor3f(game.r[i][j], game.g[i][j], game.b[i][j]);
         if (game.enemies[i][j].flag)
           drawCube(size);
 
         glTranslatef(size + 7, 0, 0);
-        find_pos_x += 7;
+        find_pos_x += size+7;
+        
         if (game.do_once) {
-          game.enemies[i][j].x = find_pos_x+40;
-          game.enemies[i][j].y = find_pos_y-60;
-          game.enemies[i][j].z = find_pos_z-430;
-
-          int id=0;
-          for (int j = 0; j <= 3; j++) {
-            for (int i = 0; i <= 15; i++) {
-              game.enemies[j][i].id=id;
-              id++;
-            }
-          }
+          game.enemies[i][j].x = find_pos_x-95;
+          game.enemies[i][j].y = find_pos_y-55;
+          game.enemies[i][j].z = find_pos_z-400;
         }
 
       if (i==3 || i==7 || i==11 || i==15) { //για να εχω 4 σε καθε γραμμη
@@ -173,41 +178,57 @@ void drawEnemy(float size) {
         glTranslatef(0, size + 7,0); 
         //μολις βρω το 3ο τοτε ξανα παω στην θεση χ=0, και το
         //ανεβαζω στον αξονα y κατα size+7
-        find_pos_y += 7;
+        find_pos_y += size + 7;
+        find_pos_x=0;
       }
 
       if (i == 15) {
         glPopMatrix(); //αξονας z
-        glTranslatef(0, 0, size / 2);
-        find_pos_z += size / 2;
+        glTranslatef(0, 0, -size / 2);
+        find_pos_z -= size / 2;
+        find_pos_x=0;
+        find_pos_y=0;
       }
-      
     }
   }
 }
 
+// angle of rotation for the camera direction
+float angle=0.0;
+// actual vector representing the camera's direction
+float lx=0.0f,lz=-1.0f;
+// XZ position of the camera
+float x=0.0f,z1=5.0f;
+
 void DrawEverything() {
 
   glPushMatrix();
+    gluLookAt(x, 1.0f, z1,
+			x+lx, 1.0f,  z1+lz,
+			0.0f, 1.0f,  0.0f);
   glTranslatef(0, 0, mpros_pisw_kamera);
   glRotatef(yr, 0, 1, 0);
   glRotatef(xr, 1, 0, 0);
 
   glPushMatrix();
-  glTranslatef(40, -60, -430); // gia na mpei mes to koyti
+  glTranslatef(40, -60, -390); // gia na mpei mes to koyti
   // to - ston x se paei aristera
   //οσο πιο μικρο y τοσο πιο κατω
 
   float size_enemy = 30.0f;
   drawEnemy(size_enemy);
-  if (game.do_once)
-    for (auto &rows : game.enemies) {
-      for (auto &elem : rows) {
-        elem.sxdia2 = size_enemy / 2;
-        elem.sydia2 = size_enemy / 2;
-        elem.szdia2 = size_enemy / 16;
+  if (game.do_once){
+    int id=0;
+    for(int i =0;i<4;i++){
+      for(int j =0 ;j<16;j++){
+        game.enemies[j][i].sxdia2 = size_enemy / 2;
+        game.enemies[j][i].sydia2 = size_enemy / 2;
+        game.enemies[j][i].szdia2 = size_enemy / 16;
+        game.enemies[j][i].id =id;
+        id++;
       }
-    }
+    } 
+  }
   glPopMatrix();
 
   // paiktis
@@ -241,7 +262,13 @@ void DrawEverything() {
   glPopMatrix();
 }
 
+
+
 void Render() {
+  
+
+
+
   glClear(GL_COLOR_BUFFER_BIT);
   glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -265,6 +292,9 @@ void Idle() {
   glutPostRedisplay();
 }
 
+//φ=45
+//θ=0
+//r=0
 void Keyboard(unsigned char key, int x, int y) {
   switch (key) {
   case 'w':
@@ -298,6 +328,31 @@ void Keyboard(unsigned char key, int x, int y) {
     game.player.y -= 5;
     break;
   }
+}
+
+void processSpecialKeys(int key, int xx, int yy) {
+
+	float fraction = 0.1f;
+	switch (key) {
+		case GLUT_KEY_LEFT :
+			angle -= 0.03f;
+			lx = sin(angle);
+			lz = -cos(angle);
+			break;
+		case GLUT_KEY_RIGHT :
+			angle += 0.03f;
+			lx = sin(angle);
+			lz = -cos(angle);
+			break;
+		case GLUT_KEY_UP :
+			x += lx * fraction+10;
+			z += lz * fraction+10;
+			break;
+		case GLUT_KEY_DOWN :
+			x -= lx * fraction+10;
+			z -= lz * fraction+10;
+			break;
+	}
 }
 
 void Setup() {

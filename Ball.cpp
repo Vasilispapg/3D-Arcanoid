@@ -10,7 +10,7 @@ public:
     float vx=0.1;
     float vy=0.1;
     float vz=40*0.03;
-    // float vz=40*0.008;
+    // float vz=40*0.01;
 
 
 void printInformation(){

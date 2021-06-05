@@ -43,54 +43,44 @@ public:
         (abs(player.z - ball.z) < (r_ball + szdia2_player) / 10)) {
       savez *= -1;
       ball.z -= 0.3;
-      cout << endl<< endl << endl<< "Xtypisa player morti" << endl<< endl<< endl<< endl;
+      
+      cout << endl
+           << endl
+           << endl
+           << "Xtypisa player morti" << endl
+           << endl
+           << endl
+           << endl;
     }
   }
 
   void hitTheEnemy() {
-    if (ball.z < -330) {
-      int count = 0;
-      for (auto &enemy : enemies) {
-        for (auto &e : enemy) {
-          count++;
-          if (count == 64)
-            break;
-          if (e.flag && abs(e.x - ball.x) < 90 && abs(e.y - ball.y) < 90 &&
-              abs(e.z - ball.z) < (r_ball + e.szdia2) / 18) {
-                printf("hited id= %d\n\n",e.id);
-            if (e.flag && (abs(e.x - ball.x) < r_ball + e.sxdia2 * 3) &&
-                (abs(e.y - ball.y) < r_ball + e.sydia2 * 5) &&
-                (abs(e.z - ball.z) < (r_ball + e.szdia2) / 20)) {
-              savez *= -1;
-              ball.z += 0.3;
-              e.flag = false;
-              cout << endl<< endl<< endl<< "Xtypisa morti enemy" << endl<< endl << endl<< endl;
-            }
-            // e.sxdia2=15
-            // r=15
-            // cout << "x= " << abs(e.x - ball.x) << " < " << r_ball + e.sxdia2 * 3<< endl;
-            // cout << "y= " << abs(e.y - ball.y) << " < " << r_ball + e.sydia2 * 3<< endl;
-            // cout << "z= " << abs(e.z - ball.z) << " < "<< (r_ball + e.szdia2) / 20 << endl;
-            // cout << "ex= " << e.x << " ey= " << e.y << " ez= " << e.z << endl;
-            // cout << "ballx= " << ball.x << " bally= " << ball.y<< " ballz= " << ball.z << endl<< endl;
-          //bgale ta meta
-          }
-          // cout<<  "x= "<<abs(e.x-ball.x) << " "<< +r_ball+sxdia2_player  <<
-          // endl; cout<<  "y= "<<abs(e.y-ball.y) << " "<< +r_ball+sydia2_player
-          // << endl; cout<<  "z= " << abs(e.z-ball.z) << " "<<
-          // +(r_ball+szdia2_player)/10  << endl; cout << "ex= " << e.x << " ey=
-          // "
-          // << e.y << " ez= " << e.z << endl; cout << "ballx= " << ball.x <<"
-          // bally= " << ball.y  << " ballz= " <<  ball.z << endl;
+    int id=-1;
+    if (ball.z < -380) {
+      for (auto &enemy : enemies) 
+      {
+        for (auto &e : enemy) 
+        {
+          if (e.flag && (abs(e.x - ball.x) < r_ball + e.sxdia2) &&
+              (abs(e.y - ball.y) < r_ball + e.sydia2) &&
+              (abs(e.z - ball.z) < (r_ball + e.szdia2) /10)) 
+          {
+          savez *= -1;
+         
+          e.flag = false;
+          cout << "x= " << abs(e.x - ball.x) << " < " << r_ball + e.sxdia2<< endl; 
+          cout << "y= " << abs(e.y - ball.y) << " < " << r_ball+ e.sydia2 << endl;
+          cout << "z= " << abs(e.z - ball.z) << " <"<< (r_ball + e.szdia2)/10 << endl; 
+          cout << "ex= " << e.x << " ey= " << e.y << " ez= " << e.z << endl; 
+          cout << "ballx= " <<ball.x << " bally= " << ball.y << " ballz= " << ball.z << endl<<endl;
+          cout << endl<< endl<< endl<< "Xtypisa morti enemy" << endl<< endl<< endl<< endl;
+          ball.z += 1.3;
         }
-        if (count == 64)
-          break;
+          // e.sxdia2 = e.sydia = 15
+          // r=15
+        }
       }
     }
-
-    // cout << "ballx= " << ball.x <<" bally= " << ball.y  << " ballz= " <<
-    // ball.z
-    // << endl;
   }
 
   void boundBall() {
@@ -122,20 +112,15 @@ public:
     }
   }
 
+
   void moveBall() {
-    float g = 10;
-    float dt = 0.01;
     float prev_x = ball.x;
     float prev_y = ball.y;
     float prev_z = ball.z;
 
     ball.z = prev_z + (ball.vz * savez);
-    ball.x = prev_x + ball.vx * savex; // ayto paei moni tis i mpala
-    ball.y = prev_y + ball.vy * savey;
-
-    // edw paei me ton paixti
-    // ball.x=player.x;
-    // ball.y=player.y;
+    ball.x = prev_x + ball.vx * savex* (((double) rand() / (RAND_MAX))+0.07); 
+    ball.y = prev_y + ball.vy * savey* (((double) rand() / (RAND_MAX))+0.07);
 
     player.x = ball.x;
     player.y = ball.y;
@@ -165,13 +150,13 @@ public:
 
   void Deije() {
     if (do_once == true) {
-      for (int j = 0; j <= 3; j++) {
-        for (int i = 0; i <= 15; i++) {
-          printf("j=%d, i=%d, x=%3.f y=%3.f z=%3.f id=%d\n", j, i, (enemies[j][i].x),
-                 enemies[j][i].y, enemies[j][i].z,enemies[j][i].id);
+      for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 16; i++) {
+          printf("j=%d, i=%d, x=%3.f y=%3.f z=%3.f id=%d\n", j, i,
+                 (enemies[i][j].x), enemies[i][j].y, enemies[i][j].z,
+                 enemies[i][j].id);
         }
       }
-      ball.printInformation();
     }
   }
 };

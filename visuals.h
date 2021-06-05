@@ -14,3 +14,5 @@ void Setup();
 void Idle();
 
 void Keyboard(unsigned char key, int x, int y);
+
+void processSpecialKeys(int key, int xx, int yy);
