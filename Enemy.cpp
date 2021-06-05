@@ -8,6 +8,6 @@ public:
     float sxdia2;
     float sydia2;
     float szdia2;
+    int id=0;
     
-
 };

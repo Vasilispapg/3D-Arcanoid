@@ -130,7 +130,7 @@ void drawCube(float size) {
   glEnd();
 }
 
-int count = 0;
+
 void drawEnemy(float size) {
   int sizey = 4;
   int sizex = sizey * sizey;
@@ -141,38 +141,47 @@ void drawEnemy(float size) {
 
   // glRotatef(45, 0, 1, 0); //για να γυρισουν πλαγια
   game.findColors(); // gia na orisei ta xrwmata stoys kivous
-  for (int j = 0; j <= sizey; j++) {
+  for (int j = 0; j < sizey; j++) {
 
     glPushMatrix(); //για τον αξονα z
 
-    for (int i = 0; i <= sizex; i++) {
+    for (int i = 0; i < sizex; i++) {
       glPushMatrix(); // για τον αξονα y
-
-      if (i) { // an einai 0 na min sxediasi
+ // an einai 0 na min sxediasi
         glColor3f(game.r[i][j], game.g[i][j], game.b[i][j]);
-        count++;
-        if (game.enemies[i - 1][j].flag)
+        if (game.enemies[i][j].flag)
           drawCube(size);
+
         glTranslatef(size + 7, 0, 0);
+        find_pos_x += 7;
         if (game.do_once) {
-          game.enemies[i - 1][j].x = find_pos_x;
-          game.enemies[i - 1][j].y = find_pos_y;
-          game.enemies[i - 1][j].z = find_pos_z;
-          find_pos_x += 7;
+          game.enemies[i][j].x = find_pos_x+40;
+          game.enemies[i][j].y = find_pos_y-60;
+          game.enemies[i][j].z = find_pos_z-430;
+
+          int id=0;
+          for (int j = 0; j <= 3; j++) {
+            for (int i = 0; i <= 15; i++) {
+              game.enemies[j][i].id=id;
+              id++;
+            }
+          }
         }
-      }
-      if (!(i % sizey)) { //για να εχω 4 σε καθε γραμμη
+
+      if (i==3 || i==7 || i==11 || i==15) { //για να εχω 4 σε καθε γραμμη
         glPopMatrix();    //αξονας y
-        glTranslatef(0, size + 7,
-                     0); //μολις βρω το 3ο τοτε ξανα παω στην θεση χ=0, και το
-                         //ανεβαζω στον αξονα y κατα size+7
+        glTranslatef(0, size + 7,0); 
+        //μολις βρω το 3ο τοτε ξανα παω στην θεση χ=0, και το
+        //ανεβαζω στον αξονα y κατα size+7
         find_pos_y += 7;
       }
-      if (i == sizex) {
+
+      if (i == 15) {
         glPopMatrix(); //αξονας z
         glTranslatef(0, 0, size / 2);
         find_pos_z += size / 2;
       }
+      
     }
   }
 }
@@ -185,19 +194,15 @@ void DrawEverything() {
   glRotatef(xr, 1, 0, 0);
 
   glPushMatrix();
-  glTranslatef(40, -90, -430); // gia na mpei mes to koyti
+  glTranslatef(40, -60, -430); // gia na mpei mes to koyti
   // to - ston x se paei aristera
   //οσο πιο μικρο y τοσο πιο κατω
 
   float size_enemy = 30.0f;
   drawEnemy(size_enemy);
-
   if (game.do_once)
     for (auto &rows : game.enemies) {
       for (auto &elem : rows) {
-        elem.x += 40;
-        elem.y -= 90;
-        elem.z -= 430;
         elem.sxdia2 = size_enemy / 2;
         elem.sydia2 = size_enemy / 2;
         elem.szdia2 = size_enemy / 16;
