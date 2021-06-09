@@ -1,7 +1,9 @@
+#include <GL/freeglut_std.h>
 #include <stdio.h>    
 #include <GL/glut.h>  
-
 #include "visuals.h"
+
+void GoMenu(int value);
 
 int main(int argc, char *argv[])
 {
@@ -11,7 +13,7 @@ int main(int argc, char *argv[])
     glutInitWindowSize(1600, 1600);
     glutInitWindowPosition(30, 30);
 
-    glutCreateWindow("Texturing Examples");
+    glutCreateWindow("Arcanoid");
 
     Setup();
 
@@ -21,10 +23,15 @@ int main(int argc, char *argv[])
     glutKeyboardFunc(Keyboard);
     glutSpecialFunc(processSpecialKeys);
 
-    glutMainLoop();
+    glutCreateMenu(AutoMoveMenu);
+    glutAddMenuEntry("Player", 1);
+    glutAddMenuEntry("Auto", 2);
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
 
+    glutMainLoop();
 
    // Close();
 
     return 0;
 }
+

@@ -2,11 +2,12 @@
 #include <GL/gl.h>
 
 #include <GL/glut.h>
+#include <cstdlib>
 #include <iostream>
 #include <math.h>
 #include <stdlib.h>
-#include <stdlib.h> /* srand, rand */
 #include <string.h>   
+#include <string>
 
 #include "visuals.h"
 
@@ -22,6 +23,17 @@ float xr = 0, yr = 0;
 float mpros_pisw_kamera = 0;
 Game game;
 
+void AutoMoveMenu(int value){
+
+    switch(value){
+        case 1:
+            game.auto_is_on=false;
+        break;
+        case 2:
+            game.auto_is_on=true;
+        break;
+    }
+}
 
 void drawSpace(float size) {
   glBegin(GL_TRIANGLES);
@@ -84,7 +96,10 @@ void drawSpace(float size) {
 }
 
 void drawBall(float size) {
-  glutSolidSphere(size / 2.f, 40, 40);
+  if(game.auto_is_on)
+    glutSolidSphere(size / 2.f, 40, 40);
+  else
+    glutSolidTeapot(size/2.f);
   game.r_ball = size / 2.f;
 }
 
@@ -133,8 +148,8 @@ void drawCube(float size) {
 void keimeno(const char *str, float size)
 {
     glPushMatrix();
-    glScalef(.3, .3, 1);
-  glColor3f(0,0,0);
+ // glScalef(.3, .3, 1);
+  glColor3f(1,1,1);
     for (unsigned int i = 0; i < strlen(str); i++)  {
         glutStrokeCharacter(GLUT_STROKE_ROMAN, str[i]);
     }
@@ -145,24 +160,25 @@ void keimeno(const char *str, float size)
 
 
 void drawEnemy(float size) {
-  int sizey = 4;
-  int sizex = sizey * sizey;
+  int walls = 4;
+  int num_of_enemies = 16;
 
   float find_pos_x = 0;
   float find_pos_y = 0;
   float find_pos_z = 0;
 
   game.findColors(); // gia na orisei ta xrwmata stoys kivous
-  for (int j = 0; j < sizey; j++) {
+  for (int j = 0; j < walls; j++) {
 
     glPushMatrix(); //για τον αξονα z
 
-    for (int i = 0; i < sizex; i++) {
+    for (int i = 0; i < num_of_enemies; i++) {
       glPushMatrix(); // για τον αξονα y
-      // an einai 0 na min sxediasi
+
         glColor3f(game.r[i][j], game.g[i][j], game.b[i][j]);
-        if (game.enemies[i][j].flag)
-          drawCube(size);
+        if (game.enemies[i][j].flag){
+          drawCube(size); 
+        }
 
         glTranslatef(size + 7, 0, 0);
         find_pos_x += size+7;
@@ -176,10 +192,10 @@ void drawEnemy(float size) {
       if (i==3 || i==7 || i==11 || i==15) { //για να εχω 4 σε καθε γραμμη
         glPopMatrix();    //αξονας y
         glTranslatef(0, size + 7,0); 
-        //μολις βρω το 3ο τοτε ξανα παω στην θεση χ=0, και το
+        //μολις βρω το 3ο/7o/11o/15o τοτε ξανα παω στην θεση χ=0, και το
         //ανεβαζω στον αξονα y κατα size+7
         find_pos_y += size + 7;
-        find_pos_x=0;
+        find_pos_x=0; //ξανα οριοθετω τον χ
       }
 
       if (i == 15) {
@@ -247,8 +263,8 @@ void DrawEverything() {
   glPushMatrix();
   glTranslatef(game.ball.x, game.ball.y, game.ball.z);
   glTranslatef(100, 0, 40);
-  // glColor3f((float) rand()/RAND_MAX, (float) rand()/RAND_MAX, (float)
-  // rand()/RAND_MAX);
+  glColor3f((float) rand()/RAND_MAX, (float) rand()/RAND_MAX, (float)
+  rand()/RAND_MAX);
   drawBall(30.0f);
   glPopMatrix();
 
@@ -259,6 +275,13 @@ void DrawEverything() {
   drawSpace(180.0f);
   glPopMatrix();
 
+  glPushMatrix();
+  string str = "Score "+to_string(game.score);
+  const char *cstr = str.c_str();
+  glTranslatef(0,150,-500);
+  keimeno(cstr,1);
+  glPopMatrix();
+
   glPopMatrix();
 }
 
@@ -266,9 +289,6 @@ void DrawEverything() {
 
 void Render() {
   
-
-
-
   glClear(GL_COLOR_BUFFER_BIT);
   glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -316,16 +336,16 @@ void Keyboard(unsigned char key, int x, int y) {
     mpros_pisw_kamera -= 10.0f;
     break;
   case '6':
-    game.player.x += 5;
+    game.player.x += 15;
     break;
   case '8':
-    game.player.y += 5;
+    game.player.y += 15;
     break;
   case '4':
-    game.player.x -= 5;
+    game.player.x -= 15;
     break;
   case '2':
-    game.player.y -= 5;
+    game.player.y -= 15;
     break;
   }
 }

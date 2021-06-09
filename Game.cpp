@@ -24,7 +24,10 @@ public:
   float savey = 1;
   float savez = 1;
 
+  int score=0;
+
   bool do_once = true;
+  bool auto_is_on=false;
 
   void boundPlayer() {
     if (player.x > 60)
@@ -55,7 +58,6 @@ public:
   }
 
   void hitTheEnemy() {
-    int id=-1;
     if (ball.z < -380) {
       for (auto &enemy : enemies) 
       {
@@ -66,7 +68,7 @@ public:
               (abs(e.z - ball.z) < (r_ball + e.szdia2) /10)) 
           {
           savez *= -1;
-         
+          score+=250;
           e.flag = false;
           cout << "x= " << abs(e.x - ball.x) << " < " << r_ball + e.sxdia2<< endl; 
           cout << "y= " << abs(e.y - ball.y) << " < " << r_ball+ e.sydia2 << endl;
@@ -122,11 +124,10 @@ public:
     ball.x = prev_x + ball.vx * savex* (((double) rand() / (RAND_MAX))+0.07); 
     ball.y = prev_y + ball.vy * savey* (((double) rand() / (RAND_MAX))+0.07);
 
-    player.x = ball.x;
-    player.y = ball.y;
-
-    // cout << "savey= "<<savey << " savex="<< savex << "bally= "<<ball.y << "
-    // balx="<< ball.x <<endl ;
+    if(auto_is_on){
+      player.x = ball.x;
+      player.y = ball.y;
+    }
 
     boundBall();
     hitThePlayer();
