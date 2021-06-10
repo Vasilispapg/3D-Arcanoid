@@ -6,28 +6,34 @@
 class Game {
 
 public:
-  Enemy enemies[16][4];
+  static const int num_of_enemies=16;
+  static const int num_of_walls=4;
+  Enemy enemies[num_of_enemies][num_of_walls];
   Ball ball;
   Player player;
 
-  float r[16][4];
-  float g[16][4];
-  float b[16][4];
-  bool flagcolor = true;
+  float r[num_of_enemies][num_of_walls];
+  float g[num_of_enemies][num_of_walls];
+  float b[num_of_enemies][num_of_walls];
 
   float r_ball;
   float sxdia2_player;
   float sydia2_player;
   float szdia2_player;
 
-  float savex = 1;
-  float savey = 1;
-  float savez = 1;
+  float change_dir_x = 1;
+  float change_dir_y = 1;
+  float change_dir_z = 1;
 
   int score=0;
+  int life=3;
+  int winning_counter=num_of_walls*num_of_enemies;
 
   bool do_once = true;
+  bool flagcolor = true;
   bool auto_is_on=false;
+
+  
 
   void boundPlayer() {
     if (player.x > 60)
@@ -40,20 +46,38 @@ public:
       player.y = -60;
   }
 
+
   void hitThePlayer() {
     if ((abs(player.x - ball.x) < r_ball + sxdia2_player) &&
         (abs(player.y - ball.y) < r_ball + sydia2_player) &&
         (abs(player.z - ball.z) < (r_ball + szdia2_player) / 10)) {
-      savez *= -1;
-      ball.z -= 0.3;
-      
-      cout << endl
-           << endl
-           << endl
-           << "Xtypisa player morti" << endl
-           << endl
-           << endl
-           << endl;
+        change_dir_z *= -1; //allagi kateytinsis
+
+      if(player.x<ball.x && player.y<ball.y){ //gia tis gwnies
+        //dejia gwnia
+        ball.vx=0.4;
+        change_dir_x=1;
+      }
+      else if(player.x>ball.x && player.y>ball.y){
+        // aristeri gwnia
+        //prepei na fygei aristera
+        ball.vx=0.4;
+        change_dir_x=-1;
+      }
+      else if(player.y>ball.y){
+        //i mpala einai katw
+        change_dir_y=-1;
+        ball.vy=0.4;
+      }
+      else if(player.y<ball.y){
+        //i mpala einai panw
+        //prepei na fygei panw
+        change_dir_y=1;
+        ball.vy=0.4;
+
+      }
+      ball.z -= 0.3; //gia na min kollaei metajy ton if
+      // cout << "Xtypisa player morti" << endl;
     }
   }
 
@@ -63,23 +87,25 @@ public:
       {
         for (auto &e : enemy) 
         {
+          
           if (e.flag && (abs(e.x - ball.x) < r_ball + e.sxdia2) &&
               (abs(e.y - ball.y) < r_ball + e.sydia2) &&
               (abs(e.z - ball.z) < (r_ball + e.szdia2) /10)) 
           {
-          savez *= -1;
-          score+=250;
-          e.flag = false;
-          cout << "x= " << abs(e.x - ball.x) << " < " << r_ball + e.sxdia2<< endl; 
-          cout << "y= " << abs(e.y - ball.y) << " < " << r_ball+ e.sydia2 << endl;
-          cout << "z= " << abs(e.z - ball.z) << " <"<< (r_ball + e.szdia2)/10 << endl; 
-          cout << "ex= " << e.x << " ey= " << e.y << " ez= " << e.z << endl; 
-          cout << "ballx= " <<ball.x << " bally= " << ball.y << " ballz= " << ball.z << endl<<endl;
-          cout << endl<< endl<< endl<< "Xtypisa morti enemy" << endl<< endl<< endl<< endl;
-          ball.z += 1.3;
-        }
-          // e.sxdia2 = e.sydia = 15
-          // r=15
+            change_dir_z *= -1; //αλλαζει κατευθυνση
+
+            winning_counter--; //afairw enan antipalo gia na jerw oti kerdisa
+
+            ball.vx=0.1; //ξανα προσαρμοζω τις ταχυτητες
+            ball.vy=0.1; //ξανα προσαρμοζω τις ταχυτητες
+
+            score+=250;
+
+            e.flag = false;//για να μην σχεδιαζεται ξανα
+
+            // cout << "Xtypisa morti enemy" << endl;
+            ball.z += 1.3;
+          }
         }
       }
     }
@@ -88,41 +114,44 @@ public:
   void boundBall() {
     if (ball.x > 75) {
       ball.x = 75;
-      savex *= -1;
+      change_dir_x *= -1;
     }
 
     if (ball.y > 75) {
       ball.y = 75;
-      savey *= -1;
+      change_dir_y *= -1;
     }
 
     if (ball.x < -75) {
       ball.x = -75;
-      savex *= -1;
+      change_dir_x *= -1;
     }
     if (ball.y < -75) {
       ball.y = -75;
-      savey *= -1;
+      change_dir_y *= -1;
     }
     if (ball.z < -450) {
       ball.z = -450;
-      savez *= -1;
+      change_dir_z *= -1;
+      //opote gyranei prws tin mpala tote na xamilwnei taxytita
+      ball.vx=0.1;
+      ball.vy=0.1;
     }
     if (ball.z > 30) {
+      life--;
       ball.z = 30;
-      savez *= -1;
+      change_dir_z *= -1;
     }
   }
-
 
   void moveBall() {
     float prev_x = ball.x;
     float prev_y = ball.y;
     float prev_z = ball.z;
 
-    ball.z = prev_z + (ball.vz * savez);
-    ball.x = prev_x + ball.vx * savex* (((double) rand() / (RAND_MAX))+0.07); 
-    ball.y = prev_y + ball.vy * savey* (((double) rand() / (RAND_MAX))+0.07);
+    ball.z = prev_z + ball.vz * change_dir_z;
+    ball.x = prev_x + ball.vx * change_dir_x;
+    ball.y = prev_y + ball.vy * change_dir_y; //thesi = proigoumeni_thesi+taxytita*kateythinsi
 
     if(auto_is_on){
       player.x = ball.x;
@@ -137,8 +166,8 @@ public:
   void findColors() {
     if (flagcolor) {
       srand((unsigned)time(NULL));
-      for (int i = 0; i <= 16; i++) {
-        for (int j = 0; j <= 4; j++) {
+      for (int i = 0; i <= num_of_enemies; i++) {
+        for (int j = 0; j <= num_of_walls; j++) {
           r[i][j] = (float)rand() / RAND_MAX;
           g[i][j] = (float)rand() / RAND_MAX;
           b[i][j] = (float)rand() / RAND_MAX;
@@ -149,15 +178,4 @@ public:
     // gia na min jana allazei apo tin idle
   }
 
-  void Deije() {
-    if (do_once == true) {
-      for (int j = 0; j < 4; j++) {
-        for (int i = 0; i < 16; i++) {
-          printf("j=%d, i=%d, x=%3.f y=%3.f z=%3.f id=%d\n", j, i,
-                 (enemies[i][j].x), enemies[i][j].y, enemies[i][j].z,
-                 enemies[i][j].id);
-        }
-      }
-    }
-  }
 };

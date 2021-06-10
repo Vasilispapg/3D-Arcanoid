@@ -13,7 +13,7 @@
 
 #include "Game.cpp"
 
-float z = -500;
+float distances = -700;
 
 int blend = 0; // Blending OFF/ON? ( NEW )
 int blend_scene = 0;
@@ -21,6 +21,7 @@ int blend_scene = 0;
 float angleX = 0.0f;
 float xr = 0, yr = 0;
 float mpros_pisw_kamera = 0;
+float panw_katw_kamera=0;
 Game game;
 
 void AutoMoveMenu(int value){
@@ -96,10 +97,7 @@ void drawSpace(float size) {
 }
 
 void drawBall(float size) {
-  if(game.auto_is_on)
-    glutSolidSphere(size / 2.f, 40, 40);
-  else
-    glutSolidTeapot(size/2.f);
+  glutSolidSphere(size / 2.f, 40, 40);
   game.r_ball = size / 2.f;
 }
 
@@ -145,10 +143,10 @@ void drawCube(float size) {
   glEnd();
 }
 
-void keimeno(const char *str, float size)
+void keimeno(const char *str)
 {
     glPushMatrix();
- // glScalef(.3, .3, 1);
+ glScalef(.3, .3, 1);
   glColor3f(1,1,1);
     for (unsigned int i = 0; i < strlen(str); i++)  {
         glutStrokeCharacter(GLUT_STROKE_ROMAN, str[i]);
@@ -177,7 +175,7 @@ void drawEnemy(float size) {
 
         glColor3f(game.r[i][j], game.g[i][j], game.b[i][j]);
         if (game.enemies[i][j].flag){
-          drawCube(size); 
+          drawCube(size);
         }
 
         glTranslatef(size + 7, 0, 0);
@@ -218,11 +216,15 @@ float x=0.0f,z1=5.0f;
 
 void DrawEverything() {
 
+  glRotatef(-20, 0, 1, 0);
+
   glPushMatrix();
     gluLookAt(x, 1.0f, z1,
 			x+lx, 1.0f,  z1+lz,
 			0.0f, 1.0f,  0.0f);
-  glTranslatef(0, 0, mpros_pisw_kamera);
+
+  glTranslatef(0, panw_katw_kamera, mpros_pisw_kamera);
+
   glRotatef(yr, 0, 1, 0);
   glRotatef(xr, 1, 0, 0);
 
@@ -276,16 +278,48 @@ void DrawEverything() {
   glPopMatrix();
 
   glPushMatrix();
+  
+  //SCORE
   string str = "Score "+to_string(game.score);
   const char *cstr = str.c_str();
   glTranslatef(0,150,-500);
-  keimeno(cstr,1);
+  keimeno(cstr);
+
+  //ZWES
+  glTranslatef(0,50,0);
+  str = "Lifes: "+to_string(game.life);
+  cstr = str.c_str();
+  keimeno(cstr);
+
+  //ZWES
+  glTranslatef(0,50,0);
+  str = "Enemies: "+to_string(game.winning_counter);
+  cstr = str.c_str();
+  keimeno(cstr);
   glPopMatrix();
 
   glPopMatrix();
 }
 
+void drawLose(){
+  glPushMatrix();
+  glRotatef(-45,  0, 1, 0);
+  glTranslatef(-50, 0, 0);
+  string str = "EXASES";
+  const char * cstr = str.c_str();
+  keimeno(cstr);
+  glPopMatrix();
+}
 
+void drawWin(){
+  glPushMatrix();
+  glRotatef(-45,  0, 1, 0);
+  glTranslatef(-50, 0, 0);
+  string str = "Kerdises";
+  const char * cstr = str.c_str();
+  keimeno(cstr);
+  glPopMatrix();
+}
 
 void Render() {
   
@@ -294,16 +328,24 @@ void Render() {
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  glTranslatef(0, 0, z);
+  glTranslatef(0, 0, distances);
 
   glRotatef(45, 0, 1, 0);
-  DrawEverything();
+  if(game.life>0){
+    DrawEverything();
+  }
+  else if(game.winning_counter==0){
+    drawWin();
+  }
+  else{
+    drawLose();
+  }
 
-  game.Deije();
   game.do_once = false;
 
   glutSwapBuffers();
 }
+
 
 void Idle() {
 
@@ -316,6 +358,7 @@ void Idle() {
 //θ=0
 //r=0
 void Keyboard(unsigned char key, int x, int y) {
+  float fraction = 0.1f;
   switch (key) {
   case 'w':
     xr += 2;
@@ -332,6 +375,14 @@ void Keyboard(unsigned char key, int x, int y) {
   case 'c':
     mpros_pisw_kamera += 10.0f;
     break;
+  case 'z':
+      x += lx * fraction+10;
+			distances += lz * fraction+10;
+      break;
+  case 'x' :
+			x -= lx * fraction+10;
+			distances -= lz * fraction+10;
+			break;
   case 'v':
     mpros_pisw_kamera -= 10.0f;
     break;
@@ -344,7 +395,7 @@ void Keyboard(unsigned char key, int x, int y) {
   case '4':
     game.player.x -= 15;
     break;
-  case '2':
+  case '5':
     game.player.y -= 15;
     break;
   }
@@ -365,12 +416,10 @@ void processSpecialKeys(int key, int xx, int yy) {
 			lz = -cos(angle);
 			break;
 		case GLUT_KEY_UP :
-			x += lx * fraction+10;
-			z += lz * fraction+10;
+      panw_katw_kamera-=10;
 			break;
 		case GLUT_KEY_DOWN :
-			x -= lx * fraction+10;
-			z -= lz * fraction+10;
+			panw_katw_kamera+=10;
 			break;
 	}
 }
