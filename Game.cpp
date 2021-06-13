@@ -6,6 +6,7 @@
 class Game {
 
 public:
+  
   static const int num_of_enemies=16;
   static const int num_of_walls=4;
   Enemy enemies[num_of_enemies][num_of_walls];

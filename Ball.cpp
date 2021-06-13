@@ -9,7 +9,7 @@ public:
     float prev_pos;
     float vx=0.1;
     float vy=0.1;
-    float vz=1.2;
+    float vz=1.52;
     // float vz=40*0.01;
 
 

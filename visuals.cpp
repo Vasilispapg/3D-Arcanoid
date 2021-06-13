@@ -177,7 +177,7 @@ void drawEnemy(float size) {
         if (game.enemies[i][j].flag){
           drawCube(size);
         }
-
+        
         glTranslatef(size + 7, 0, 0);
         find_pos_x += size+7;
         
@@ -291,7 +291,7 @@ void DrawEverything() {
   cstr = str.c_str();
   keimeno(cstr);
 
-  //ZWES
+  //ENEMIES
   glTranslatef(0,50,0);
   str = "Enemies: "+to_string(game.winning_counter);
   cstr = str.c_str();
@@ -331,15 +331,17 @@ void Render() {
   glTranslatef(0, 0, distances);
 
   glRotatef(45, 0, 1, 0);
-  if(game.life>0){
+  if(game.life>0 && game.winning_counter!=0){
     DrawEverything();
-  }
-  else if(game.winning_counter==0){
-    drawWin();
   }
   else{
     drawLose();
   }
+  if(game.winning_counter==0){
+    drawWin();
+  }
+  
+
 
   game.do_once = false;
 
