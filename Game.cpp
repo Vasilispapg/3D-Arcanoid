@@ -13,14 +13,11 @@ public:
   Ball ball;
   Player player;
 
-  float r[num_of_enemies][num_of_walls];
-  float g[num_of_enemies][num_of_walls];
-  float b[num_of_enemies][num_of_walls];
+  float r[num_of_enemies][num_of_walls],g[num_of_enemies][num_of_walls],b[num_of_enemies][num_of_walls];
 
   float r_ball;
-  float sxdia2_player;
-  float sydia2_player;
-  float szdia2_player;
+  float sxdia2_player,sydia2_player,szdia2_player;
+  float sxdia2_enemy,sydia2_enemy,szdia2_enemy;;
 
   float change_dir_x = 1;
   float change_dir_y = 1;
@@ -33,8 +30,6 @@ public:
   bool do_once = true;
   bool flagcolor = true;
   bool auto_is_on=false;
-
-  
 
   void boundPlayer() {
     if (player.x > 60)
@@ -89,9 +84,9 @@ public:
         for (auto &e : enemy) 
         {
           
-          if (e.flag && (abs(e.x - ball.x) < r_ball + e.sxdia2) &&
-              (abs(e.y - ball.y) < r_ball + e.sydia2) &&
-              (abs(e.z - ball.z) < (r_ball + e.szdia2) /10)) 
+          if (e.flag && (abs(e.x - ball.x) < r_ball + sxdia2_enemy) &&
+              (abs(e.y - ball.y) < r_ball + sydia2_enemy) &&
+              (abs(e.z - ball.z) < (r_ball + szdia2_enemy) /10)) 
           {
             change_dir_z *= -1; //αλλαζει κατευθυνση
 

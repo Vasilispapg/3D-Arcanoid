@@ -5,9 +5,5 @@ public:
     float y=0;
     float z=0;
     bool flag=true;
-    float sxdia2;
-    float sydia2;
-    float szdia2;
-    int id=0;
     
 };

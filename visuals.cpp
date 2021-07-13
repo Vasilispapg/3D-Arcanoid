@@ -236,16 +236,9 @@ void DrawEverything() {
   float size_enemy = 30.0f;
   drawEnemy(size_enemy);
   if (game.do_once){
-    int id=0;
-    for(int i =0;i<4;i++){
-      for(int j =0 ;j<16;j++){
-        game.enemies[j][i].sxdia2 = size_enemy / 2;
-        game.enemies[j][i].sydia2 = size_enemy / 2;
-        game.enemies[j][i].szdia2 = size_enemy / 16;
-        game.enemies[j][i].id =id;
-        id++;
-      }
-    } 
+        game.sxdia2_enemy = size_enemy / 2;
+        game.sydia2_enemy = size_enemy / 2;
+        game.szdia2_enemy = size_enemy / 16;
   }
   glPopMatrix();
 
@@ -303,21 +296,22 @@ void DrawEverything() {
 
 void drawLose(){
   glPushMatrix();
-  glRotatef(-45,  0, 1, 0);
-  glTranslatef(-50, 0, 0);
-  string str = "EXASES";
-  const char * cstr = str.c_str();
-  keimeno(cstr);
+    glRotatef(-45,  0, 1, 0);
+    glTranslatef(-150, 0, 0);
+    string str = "You lost!";
+    const char * cstr = str.c_str();
+    keimeno(cstr);
   glPopMatrix();
 }
 
 void drawWin(){
+  
   glPushMatrix();
-  glRotatef(-45,  0, 1, 0);
-  glTranslatef(-50, 0, 0);
-  string str = "Kerdises";
-  const char * cstr = str.c_str();
-  keimeno(cstr);
+    glRotatef(-45,  0, 1, 0);
+    glTranslatef(-100, 0, 0);
+    string str = "You won!";
+    const char * cstr = str.c_str();
+    keimeno(cstr);
   glPopMatrix();
 }
 
@@ -341,24 +335,17 @@ void Render() {
     drawWin();
   }
   
-
-
   game.do_once = false;
-
   glutSwapBuffers();
 }
 
 
 void Idle() {
-
   game.moveBall();
   game.boundPlayer();
   glutPostRedisplay();
 }
 
-//φ=45
-//θ=0
-//r=0
 void Keyboard(unsigned char key, int x, int y) {
   float fraction = 0.1f;
   switch (key) {
@@ -432,12 +419,11 @@ void Setup() {
   GLfloat lightPos[] = {0.0f, 0.0f, 3.0f, 0.0f};
   GLfloat lightPos2[] = {30.0f, 30.0f, 30.0f, 1.0f};
 
-  // glEnable(GL_CULL_FACE);
+
   glFrontFace(GL_CCW);
   glShadeModel(GL_SMOOTH);
   glEnable(GL_DEPTH_TEST);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   // BLENDING STUFF
   glDepthFunc(GL_LEQUAL);
